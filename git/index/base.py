@@ -601,9 +601,10 @@ class IndexFile(LazyMixin, git_diff.Diffable, Serializable):
             if it is not within our git directory"""
         if not osp.isabs(path):
             return path
+        
         if self.repo.bare:
             raise InvalidGitRepositoryError("require non-bare repository")
-        if not str(path).startswith(str(self.repo.working_tree_dir)):
+        if self.repo.working_tree_dir not in path.parents:
             raise ValueError("Absolute path %r is not in git repository at %r" % (path, self.repo.working_tree_dir))
         return os.path.relpath(path, self.repo.working_tree_dir)
 
